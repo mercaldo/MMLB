@@ -27,6 +27,11 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
   
   if(is.null(inits)) {
     inits = c(glm(mean.formula,family='binomial',data=data)$coef, rep(1, ncol(x.t) + ncol(x.lv)))
+    if(any(is.na(inits))) {
+      omit_dup_col = which(is.na(inits))
+      x            = x[,-c(omit_dup_col)]
+      inits        = inits[-c(omit_dup_col)]
+    }
   }
   
   if(is.null(offset)) {
