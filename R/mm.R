@@ -2,18 +2,17 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
          samp.probs = c(1, 1, 1), samp.probsi = NULL, offset = NULL, q = 10, 
          cond.like = FALSE, step.max = 1, step.tol = 1e-06, hess.eps = 1e-07, 
          adapt.quad = FALSE, verbose = FALSE, iter.lim=100) {
-
-  if(is.null(id)) {stop('Provide id vector or variable name!')}
-#  if(as.character(as.name(id))%in%colnames(data)) id = data[,as.character(as.name(id))]
   
-#  id.f = model.frame(id, data)
-#  id   = model.extract(id.f, id)
+  terms = unique( c(all.vars(mean.formula), all.vars(lv.formula), all.vars(t.formula), 
+                    as.character(substitute(id))) )
+  data  = data[,terms]
+  if(any(is.na(data))) data = na.omit(data)
+  id    = data$id    = data[ , as.character(substitute(id)) ]
   
   mean.f = model.frame(mean.formula, data)
   mean.t = attr(mean.f, "terms")
-  y  = model.response(mean.f,'numeric') # check if its binary?
+  y  = model.response(mean.f,'numeric') 
   uy = unique(y)
-  if(length(uy)!=2 | !setequal(uy,c(0,1))) stop('Problem: Check outcome! Binary? Response variation?')
   x  = model.matrix(mean.formula,mean.f)
   
   x.t = x.lv = matrix(0, ncol=1, nrow=length(y))
@@ -21,14 +20,10 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
   if(!is.null(lv.formula))  x.lv = model.matrix(lv.formula, model.frame(lv.formula, data)) 
   
   samp.probs = matrix(samp.probs,nrow=length(y),ncol=3,byrow=TRUE) #(never, any, always)
-  
-#  if(cond.like | length(unique(samp.probs))==1) {
+
   if(is.null(samp.probsi)) {
     samp.probsi = matrix(1,nrow=length(y),ncol=1) 
-  } #else {
-    #samp.probsi = matrix(unlist(lapply(split(y,id),function(Z) {rep(samp.probs[1]*(sum(Z)==0) + samp.probs[3]*(sum(Z)==length(Z)) +
-    #                                                                 samp.probs[2]*(sum(Z)!=0 & sum(Z)!=length(Z) ) ,length(Z))})),ncol=1)
-  #}
+  }
   
   if(is.null(inits)) {
     inits = c(glm(mean.formula,family='binomial',data=data)$coef, rep(1, ncol(x.t) + ncol(x.lv)))
