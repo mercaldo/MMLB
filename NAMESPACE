@@ -1,0 +1,8 @@
+useDynLib(MMLB, DeconvolveGH_CALL, LogLScoreCalc_CALL)
+import(fastGHQuad, MASS)
+export(mm, MMLongit)
+S3method(summary, MMLongit)
+S3method(anova, MMLongit)
+S3method(print, summary.MMLongit)
+S3method(print, MMLongit)
+S3method(print, anova.MMLongit)

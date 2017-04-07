@@ -1,0 +1,10 @@
+Package: MMLB
+Version: 1.0
+Date: 2014-04-03
+Title: Marginalized Models for Longitudinal Binary Data
+Author: Jonathan Schildcrout <jonathan.schildcrout@vanderbilt.edu>
+Maintainer: Nathaniel Mercaldo <nate.mercaldo@vanderbilt.edu>
+Imports: fastGHQuad, MASS
+Description: Estimates marginalized mean and dependence model parameters for longitudinal binary response data. Dependence models may include either transition or latent variable terms and may depend on covariates.
+License: GPL (>= 2)
+LazyLoad: yes
