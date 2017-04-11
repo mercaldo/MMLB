@@ -14,5 +14,6 @@ Windows/Linux:
 
     install_github('MMLB','mercaldo')
     If the above doesn't work, try: install_github("mercaldo/MMLB") [not tested]
+	If there are problems installing MMLB on Windows, try installing RTools (http://cran.r-project.org/bin/windows/Rtools/).
 
-If there are problems installing MMLB on Windows, try installing RTools (http://cran.r-project.org/bin/windows/Rtools/).
+
