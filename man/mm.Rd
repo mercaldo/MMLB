@@ -49,7 +49,6 @@ Nathaniel Mercaldo
 \examples{
 \dontrun{
 data(datrand)
-fit <- mm(Y~time*binary, t.formula=~1, data=datrand, id=datrand$id,
-step.max=4, verbose=FALSE)}
+fit <- mm(Y~time*binary, t.formula=~1, data=datrand, id=id, step.max=4, verbose=FALSE)}
 }
 
