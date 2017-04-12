@@ -3,6 +3,8 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
          cond.like = FALSE, step.max = 1, step.tol = 1e-06, hess.eps = 1e-07, 
          adapt.quad = FALSE, verbose = FALSE, iter.lim=100) {
   
+  if(is.null(lv.formula) & is.null(t.formula)) {stop('Specify association model (both lv.formula and t.formula arguments cannot be NULL.')}
+  
   terms = unique( c(all.vars(mean.formula), all.vars(lv.formula), all.vars(t.formula), 
                     as.character(substitute(id))) )
   data  = data[,terms]
