@@ -13,8 +13,9 @@ Mac OSX:
 Windows/Linux:
 
     install_github("mercaldo/MMLB", force=TRUE)
-	If there are problems installing MMLB on Windows, try installing the appropriate version of RTools (http://cran.r-project.org/bin/windows/Rtools/).
-	The version of RTools should correspond to the installed version of R. See version in R.
+	If there are problems installing MMLB on Windows, try installing the appropriate version of RTools 
+	  (http://cran.r-project.org/bin/windows/Rtools/). The version of RTools should correspond to the 
+	  installed version of R. See version in R.
 
 
 
