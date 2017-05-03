@@ -579,7 +579,7 @@ SEXP LogLScoreCalc_CALL( SEXP SEXP_betaM,
         }
         //printf("Samps ===== %f ========= %f% =========== %f ----- \n", SampProbi[0], li2, li1);
         li[i]  = log(SampProbi[0]) + li1 - li2;
-		ACi[i] = exp(-1.0*li2)
+		ACi[i] = exp(-1.0*li2);
 	
         if (!CondLike){  li[i] = li1 /SampProbi[0];}
 
