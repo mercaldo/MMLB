@@ -72,6 +72,8 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
   out$lv.formula = lv.formula
   out$LogLikeSubj = mm.fit$LogLikeSubj
   out$ObsInfoSubj = mm.fit$ObsInfoSubj
+  out$ACSubj      = mm.fit$ACSubj
+  out$LLSC_args   = mm.fit$LLSC_args
   class(out) = 'MMLongit'
   out
 }
