@@ -358,8 +358,6 @@ SEXP LogLScoreCalc_CALL( SEXP SEXP_betaM,
     double *sigma     = REAL(SEXP_sigma);    // For gradient calculations     
     double *Z         = REAL(SEXP_Z);
     double *W         = REAL(SEXP_W);
-  //  double *SampProbs = REAL(SEXP_SampProbs);
-  //  double *Offset    = REAL(SEXP_Offset);
 
     //printf("Offset %f %f %f %f \n", Offset[0], SampProbs[0], SampProbs[1], SampProbs[2]);
     // non-array SEXP objects
@@ -375,21 +373,21 @@ SEXP LogLScoreCalc_CALL( SEXP SEXP_betaM,
 
     // pointers to SEXP data
     double *Xi, *Xi_gam, *Xi_sig, *etai, *Yi, *Yilag,  *GAM,  *SIG, *SampProbi, *SampProbs, *Offset, *countYs;
-  //  double OFFSET;
 
     // SEXP variables needed
     SEXP SEXP_subject, SEXP_etai, SEXP_Deltai, 
          SEXP_Xi, SEXP_Xi_gam, SEXP_Xi_sig, SEXP_Yi, SEXP_Yilag, SEXP_GAM, SEXP_SIG, SEXP_SampProbi,
          SEXP_SampProbs, SEXP_countYs, SEXP_Offset, SEXP_etaitmp;
-		 // SEXP_Gam_mod,SEXP_Sig,SEXP_Gam,SEXP_tmp2,SEXP_Sig_mod,SEXP_tmpsig,SEXP_tmpgam, SEXP_tmp,
+
     p     = length(SEXP_betaM);
     p_gam = length(SEXP_gamma);
     p_sig = length(SEXP_sigma);
     p_ALL = p + p_gam + p_sig;
 
-    double li[NumSubj], Li[NumSubj];
+    double li[NumSubj], Li[NumSubj], ACi[NumSubj];
     for(i = 0; i < NumSubj; i++) { li[i] = 0;
-                                   Li[i] = 0;}
+                                   Li[i] = 0;
+							       ACi[i]= 0; }
 
     double ddtheta_loglikei[p_ALL*NumSubj];
     double MuiPC_z_lagged[Q], ddtheta_MuiPC_z_lagged[p_ALL*Q], h0[Q], h1[Q];
@@ -435,14 +433,6 @@ SEXP LogLScoreCalc_CALL( SEXP SEXP_betaM,
         
         PROTECT(SEXP_countYs = evalR("sum", R_GlobalEnv, 1, SEXP_Yi));
         countYs = REAL(SEXP_countYs);
-        //countYs = 0;
-        //printf("etai --------- %f --------- %f \n", etai[0], etai[3]);
-        //for(l = 0; l < ni; l++) countYs = countYs + Yi[l]; 
-        //printf("countYs ---------%f %f %f %f %f--------- \n", countYs[0], Yi[0], Yi[1], Yi[2], Yi[3]);
-        //OFFSET = Offset[0]/ni;
-        //if (countYs[0] == 0) OFFSET=0;
-        //for(l = 0; l < ni; l++) Deltai[l] = Deltai[l] + tmp;            // ADDED IN OFFSET HERE!!!!
-        //printf("tmp --------- %f ========= \n", OFFSET);
 
         PROTECT(SEXP_GAM = evalR("%*%", R_GlobalEnv, 2, SEXP_Xi_gam, SEXP_gamma));
         GAM = REAL(SEXP_GAM);
@@ -453,15 +443,11 @@ SEXP LogLScoreCalc_CALL( SEXP SEXP_betaM,
         // CALCULATE DELTA
 
         double *Deltai;
-        SEXP_Deltai = DeconvolveGH_CALL(SEXP_etai, SEXP_GAM, SEXP_SIG, SEXP_Z, SEXP_W);//, OFFSET);
-        //printf("Deconvolve--------- %f ----------- \n", SEXP_Deltai);
+        SEXP_Deltai = DeconvolveGH_CALL(SEXP_etai, SEXP_GAM, SEXP_SIG, SEXP_Z, SEXP_W);
         UNPROTECT(3); // unprotects SEXP_countYs, SEXP_GAM and SEXP_SIG
         PROTECT(SEXP_Deltai);
         Deltai = REAL(SEXP_Deltai);
 
-        //tmp = Offset[0];
-        //if (countYs[0] == 0) tmp=0;
-        //for(l = 0; l < ni; l++) Deltai[l] = Deltai[l] + tmp;            // ADDED IN OFFSET HERE!!!!
         // Initialized and caluclate the 'n_i by p_all matrix' of partial derivatives of the marginal mean w.r.t.
         // the parameters
 
@@ -540,8 +526,6 @@ SEXP LogLScoreCalc_CALL( SEXP SEXP_betaM,
         double dli1_dtheta[p_ALL],     dli2_dtheta[p_ALL], 
                dLiAll0s_dtheta[p_ALL], dLiAll1s_dtheta[p_ALL], 
                dliAll0s_dtheta[p_ALL], dliAll1s_dtheta[p_ALL];
-        //double ddtheta_gamma1[p_ALL*ni], ddtheta_gamma2[p_ALL*ni],
-        //       ddtheta_sigma1[p_ALL*ni], ddtheta_sigma2[p_ALL*ni];
         double li1, li2, liAll0s, liAll1s, LiAll0s, LiAll1s;
         double YiAll0s[ni], YiAll1s[ni], YilagAll0s[ni], YilagAll1s[ni];
 
@@ -570,19 +554,18 @@ SEXP LogLScoreCalc_CALL( SEXP SEXP_betaM,
 
             // Calculate log likelihood and score
             LogLScoreTheta(Deltai, Yi, Yilag, GAM, SIG,
-                           ddtheta_deltai_tmp, ddtheta_gamma_tmp, ddtheta_sigma_tmp, Z, W,// OFFSET,
+                           ddtheta_deltai_tmp, ddtheta_gamma_tmp, ddtheta_sigma_tmp, Z, W,
                            Q, length(SEXP_Deltai), &dli1_dtheta[e], &li1); 
-            //li1 = li1 + log(SampProbi[0])-log(SampProbs[0]);
-            /////////////////////////////////////////////////////////////////////////////////////////
+
             // Conditional likelihood analysis
            // ?? CAN WE USE WEIGHTS WITH CONDITIONAL ANALYSIS?? ARE THE estimating eqn weights right? I think so...
             if (CondLike == 1){
                 //li1 = li1 + log(SampProbi[0]);
                 LogLScoreTheta(Deltai, YiAll0s, YilagAll0s, GAM, SIG,
-                               ddtheta_deltai_tmp, ddtheta_gamma_tmp, ddtheta_sigma_tmp, Z, W,// OFFSET,
+                               ddtheta_deltai_tmp, ddtheta_gamma_tmp, ddtheta_sigma_tmp, Z, W,
                                Q, length(SEXP_Deltai), &dliAll0s_dtheta[e], &liAll0s); 
                 LogLScoreTheta(Deltai, YiAll1s, YilagAll1s, GAM, SIG,
-                               ddtheta_deltai_tmp, ddtheta_gamma_tmp, ddtheta_sigma_tmp, Z, W,// OFFSET,
+                               ddtheta_deltai_tmp, ddtheta_gamma_tmp, ddtheta_sigma_tmp, Z, W,
                                Q, length(SEXP_Deltai), &dliAll1s_dtheta[e], &liAll1s);
 
                 LiAll0s            = exp(liAll0s);
@@ -593,17 +576,13 @@ SEXP LogLScoreCalc_CALL( SEXP SEXP_betaM,
             }
             /////////////////////////////////////////////////////////////////////////////////////////
             li2 = log( SampProbs[1] + (SampProbs[0]-SampProbs[1])*LiAll0s + (SampProbs[2]-SampProbs[1])*LiAll1s); 
-            //li2 = log(1-LiAll0s-LiAll1s);  
         }
         //printf("Samps ===== %f ========= %f% =========== %f ----- \n", SampProbi[0], li2, li1);
-        li[i] = log(SampProbi[0]) + li1 - li2;
+        li[i]  = log(SampProbi[0]) + li1 - li2;
+		ACi[i] = exp(-1.0*li2)
+	
         if (!CondLike){  li[i] = li1 /SampProbi[0];}
-        //printf("Samps ===== %f ----- \n", li[i]);
-        //printf("WEIGHTS============ %f \n", Weights[0]);
-        //for(e = 0; e < p_ALL; e++) { 
-          //  dli2_dtheta[e] = -1 * (dLiAll0s_dtheta[e] + dLiAll1s_dtheta[e]) / (1 - LiAll0s - LiAll1s);
-            //ddtheta_loglikei[i*p_ALL + e] = Weights[0]*(dli1_dtheta[e] - dli2_dtheta[e]);
-        //} 
+
         for(e = 0; e < p_ALL; e++) { 
             dli2_dtheta[e] = ( (SampProbs[0]-SampProbs[1])*dLiAll0s_dtheta[e] +
                                (SampProbs[2]-SampProbs[1])*dLiAll1s_dtheta[e] ) / 
@@ -639,23 +618,19 @@ SEXP LogLScoreCalc_CALL( SEXP SEXP_betaM,
 
         }
 
+        // Gradient Calculation
         SEXP SEXP_Gradient;
         double *Gradient;
-                                             //printf("=== ddtheta_llikei ===\n");    
-                                           //printMat(ddtheta_llikei, 1, p_ALL);
-                                           //printf("sigma = %d %d %d %d %d  \n", p, p_gam, p_sig, p_ALL, p+p_gam);
-        // Gradient Calculation
+		
         PROTECT(SEXP_Gradient = allocVector(REALSXP, p_ALL));
         Gradient              = REAL(SEXP_Gradient);
         
         for(i = 0; i < (p+p_gam); i++)   Gradient[i] = ddtheta_llikei[i];
         for(i = p+p_gam; i < p_ALL; i++) Gradient[i] = sigma[i-(p+p_gam)]*ddtheta_llikei[i];
 
-        //printR(SEXP_Gradient);                  //printMat(ddtheta_llikei);
-                                                //    printf("=== loglike ===\n");
-                                                //    printR(SEXP_temp_retval);
         setAttrib(SEXP_retval, install("gradient"), SEXP_Gradient); 
         UNPROTECT(1);   // unprotect SEXP_Gradient
+		
 		
         SEXP SEXP_LogLikeI;
         double *LogLikeI;
@@ -674,7 +649,7 @@ SEXP LogLScoreCalc_CALL( SEXP SEXP_betaM,
         PROTECT(SEXP_ACSubj = allocVector(REALSXP, NumSubj));
         ACSubj              = REAL(SEXP_ACSubj);
         
-        for(i = 0; i < (NumSubj); i++)   ACSubj[i] = exp(-li2[i]);
+        for(i = 0; i < (NumSubj); i++)   ACSubj[i] = ACi[i];
 
         setAttrib(SEXP_retval, install("ACSubj"), SEXP_ACSubj); 
         UNPROTECT(1);   // unprotect SEXP_ACSubj
