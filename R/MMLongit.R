@@ -4,8 +4,7 @@ function(params, id, X, Y, Xgam, Xsig, Q, condlike=FALSE,
                    sampprobi=rep(1, length(Y)), offset=rep(0, length(Y)),
                    stepmax=1, steptol=1e-6,
                    hess.eps=1e-7, AdaptiveQuad=FALSE, verbose=FALSE,iterlim){
-  #W <- get.GH.w(Q)
-  #Z <- get.GH.z(Q)
+  
   tmp <- get.GH(Q)
   W   <- tmp$w
   Z   <- tmp$z
@@ -58,16 +57,17 @@ function(params, id, X, Y, Xgam, Xsig, Q, condlike=FALSE,
   ## Fit the data using R's nlm() minimizer function
   if (!AdaptiveQuad){
     fit   <- nlm(LogLScoreCalc, params, subjectData=subjectData, CondLike=condlike, ParamLengths=paramlengths, 
-                 Q=Q, W=W, Z=Z, print.level=verbose*2, stepmax=stepmax, steptol=steptol, hessian=FALSE, iterlim=iterlim)#, SampProbs=sampprobs)
+                 Q=Q, W=W, Z=Z, print.level=verbose*2, stepmax=stepmax, steptol=steptol, hessian=FALSE, iterlim=iterlim)
   } else if (AdaptiveQuad){
     fit   <- nlm(LogLScoreCalc, params, subjectData=subjectData, CondLike=condlike, ParamLengths=paramlengths, 
-                 Q=Q, W=W, Z=Z, print.level=verbose*2, stepmax=stepmax, steptol=steptol, hessian=FALSE, AdaptiveQuad=TRUE,iterlim=iterlim)#, SampProbs=sampprobs)
+                 Q=Q, W=W, Z=Z, print.level=verbose*2, stepmax=stepmax, steptol=steptol, hessian=FALSE, AdaptiveQuad=TRUE,iterlim=iterlim)
   }
 
   sprobi <- c(unlist(tapply(sampprobi, id, unique)))
   LogLikeSubj.tmp <- LogLScoreCalc( params=fit$estimate, subjectData=subjectData, 
                                            Q=Q, W=W, Z=Z, ParamLengths=paramlengths, CondLike=condlike)
   LogLikeSubj <- attr(LogLikeSubj.tmp,"LogLikeSubj")*sprobi
+  ac <- attr(LogLikeSubj.tmp, "ACSubj")
   
   ## Calculate Hessian / Model Based Covariance
   NumSubjs  <- length(subjectData)
@@ -83,7 +83,7 @@ function(params, id, X, Y, Xgam, Xsig, Q, condlike=FALSE,
   if (!AdaptiveQuad){
     for (j in 1:length(fit$estimate)){
       temp        <- LogLScoreCalc( params=(fit$estimate+eps.mtx[j,]), subjectData=subjectData, 
-                                    Q=Q, W=W, Z=Z, ParamLengths=paramlengths, CondLike=condlike)#, offset=offset)#, SampProbs=sampprobs)
+                                    Q=Q, W=W, Z=Z, ParamLengths=paramlengths, CondLike=condlike)
       ObsInfo[j,] <- (attr(temp,"gradient") - grad.at.max)/hess.eps
       
       grad_mat[j,] <- attr(temp,"gradient") 
@@ -99,7 +99,7 @@ function(params, id, X, Y, Xgam, Xsig, Q, condlike=FALSE,
   }else if (AdaptiveQuad){
     for (j in 1:length(fit$estimate)){
       temp  <- LogLScoreCalc( params=(fit$estimate+eps.mtx[j,]),  subjectData=subjectData, 
-                              Q=Q, W=W, Z=Z, ParamLengths=paramlengths, CondLike=condlike, AdaptiveQuad=TRUE)#offset=offset,#, SampProbs=sampprobs)    
+                              Q=Q, W=W, Z=Z, ParamLengths=paramlengths, CondLike=condlike, AdaptiveQuad=TRUE)    
       ObsInfo[j,]   <- (attr(temp,"gradient") - grad.at.max)/hess.eps
       #grad_mat[j,] <- attr(temp,"gradient")
       
@@ -142,11 +142,16 @@ function(params, id, X, Y, Xgam, Xsig, Q, condlike=FALSE,
   ## Empirical Covariance 
   if (AdaptiveQuad==FALSE){
     Cheese  <- LogLScoreCalc( params=fit$estimate, subjectData=subjectData, Q=Q, W=W, Z=Z,
-                              ParamLengths=paramlengths, CondLike=condlike, EmpiricalCheeseCalc=TRUE)#, offset=offset)#, SampProbs=sampprobs)
+                              ParamLengths=paramlengths, CondLike=condlike, EmpiricalCheeseCalc=TRUE)
   }else if (AdaptiveQuad==TRUE){
     Cheese  <- LogLScoreCalc( params=fit$estimate, subjectData=subjectData, Q=Q, W=W, Z=Z,
-                              ParamLengths=paramlengths, CondLike=condlike, EmpiricalCheeseCalc=TRUE,AdaptiveQuad=TRUE)#, offset=offset, )#, SampProbs=sampprobs)
+                              ParamLengths=paramlengths, CondLike=condlike, EmpiricalCheeseCalc=TRUE,AdaptiveQuad=TRUE)
   }
+  
+  LLSC_args <- list(params = fit$estimate, subjectData = subjectData, 
+                    Q = Q, W = W, Z = Z, ParamLengths = paramlengths, CondLike = condlike, 
+                    EmpiricalCheeseCalc = TRUE, AdaptiveQuad = TRUE)
+  
   ## This step removes the rows and columns of the cheese matrix that are all zeros
   ## For example, in a random intercept model, this will be the transition component row/column and 
   ## in a transition model, this will be the variance component row/column
@@ -172,7 +177,7 @@ function(params, id, X, Y, Xgam, Xsig, Q, condlike=FALSE,
   out<-list(beta=beta, alpha=alpha, logL=-fit$minimum,  gradient=-1*gradient,
             varbeta=varbeta,varalpha=varalpha,modelcov=cov.model, empiricalcov=cov.empirical,
             Cheese=Cheese, condlike=condlike, code=code, Q=Q,AdaptiveQuad=AdaptiveQuad, niter=n.iter,
-            LogLikeSubj=LogLikeSubj, ObsInfoSubj=ObsInfo_i)
+            LogLikeSubj=LogLikeSubj, ObsInfoSubj=ObsInfo_i,ACSubj = ac, LLSC_args = LLSC_args)
   class(out)="MMLongit"
   out
 }
