@@ -348,12 +348,10 @@ SEXP LogLScoreCalc_CALL( SEXP SEXP_betaM,
                          SEXP SEXP_sigma,
                          SEXP SEXP_subjectData,
                          SEXP SEXP_CondLike,
-                        // SEXP SEXP_SampProbs,
                          SEXP SEXP_EmpiricalCheeseCalc,
                          SEXP SEXP_Q,
                          SEXP SEXP_W,
                          SEXP SEXP_Z,
- //                        SEXP SEXP_Offset,
                          SEXP SEXP_AdaptiveQuad ){
 
     // grab pointers from SEXP objects
@@ -669,6 +667,17 @@ SEXP LogLScoreCalc_CALL( SEXP SEXP_betaM,
 
         setAttrib(SEXP_retval, install("LogLikeSubj"), SEXP_LogLikeI); 
         UNPROTECT(1);   // unprotect SEXP_LogLikeI
+		
+        SEXP SEXP_ACSubj;
+        double *ACSubj;
+		
+        PROTECT(SEXP_ACSubj = allocVector(REALSXP, NumSubj));
+        ACSubj              = REAL(SEXP_ACSubj);
+        
+        for(i = 0; i < (NumSubj); i++)   ACSubj[i] = exp(-li2[i]);
+
+        setAttrib(SEXP_retval, install("ACSubj"), SEXP_ACSubj); 
+        UNPROTECT(1);   // unprotect SEXP_ACSubj
 		
         SEXP SEXP_ddtheta_loglikei;
         double *out_ddtheta_loglikei;
