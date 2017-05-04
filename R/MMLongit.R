@@ -48,8 +48,8 @@ function(params, id, X, Y, Xgam, Xsig, Q, condlike=FALSE,
                              Ylag=as.double(Ylag.tmp[[i]]),
                              Xgam=matrix(Xgam.tmp[[i]], ncol=Xgam.col),
                              Xsig=matrix(Xsig.tmp[[i]], ncol=Xsig.col),
-                             SampProbi=unique(SampProbi.tmp[[i]]),
-                             SampProbs=unique(matrix(SampProbs.tmp[[i]], ncol=ncol(sampprobs))),
+                             SampProbi=SampProbi.tmp[[i]],
+                             SampProbs=matrix(SampProbs.tmp[[i]], ncol=ncol(sampprobs)),
                              Offset=as.double(offset.tmp[[i]]))
   }
   names(subjectData) <- uid
