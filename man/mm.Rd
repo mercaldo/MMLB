@@ -8,7 +8,7 @@ Fit a marginalzed transition and/or latent variable models (mTLV) as described b
 }
 \usage{
 mm(mean.formula, lv.formula = NULL, t.formula = NULL, id, data,
-   inits = NULL, samp.probs = c(1, 1, 1), offset = 0, q = 10, 
+   inits = NULL, samp.probs = c(1, 1, 1), samp.probi=NULL, offset = 0, q = 10, 
    cond.like = FALSE, step.max = 1, step.tol = 1e-06, hess.eps = 1e-07, 
    adapt.quad = FALSE, verbose = FALSE,iter.lim=100)
 }
@@ -22,7 +22,7 @@ mm(mean.formula, lv.formula = NULL, t.formula = NULL, id, data,
   \item{data}{ a required data frame }
   \item{inits}{an optional vector for initial values for marginal mean parameters and all dependence parameters. If NULL, initial values will be automatically generated.}
   \item{samp.probs}{a vector of 3 values that denote the sampling probability of non-responders, any-responders, and all-responders.}
-  \item{samp.probsi}{a vector of sampling probabilities - if using weighted estimating equations.}
+  \item{samp.probi}{a vector of sampling probabilities - if using weighted estimating equations.}
   \item{offset}{an optional offset term.}
   \item{q}{a scalar to denote the number of quadrature points used for GH numerical integration. Only values of 3, 5, 10, 20 and 50 are applicable.}
   \item{cond.like}{indicator to denote if the conditional likelihood should be maximized.}
