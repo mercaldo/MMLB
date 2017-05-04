@@ -1,5 +1,5 @@
 mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, inits = NULL,
-         samp.probs = c(1, 1, 1), samp.probsi = NULL, offset = NULL, q = 10, 
+         samp.probs = c(1, 1, 1), samp.probi = NULL, offset = NULL, q = 10, 
          cond.like = FALSE, step.max = 1, step.tol = 1e-06, hess.eps = 1e-07, 
          adapt.quad = FALSE, verbose = FALSE, iter.lim=100) {
   
@@ -23,8 +23,8 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
   
   samp.probs = matrix(samp.probs,nrow=length(y),ncol=3,byrow=TRUE) #(never, any, always)
 
-  if(is.null(samp.probsi)) {
-    samp.probsi = matrix(1,nrow=length(y),ncol=1) 
+  if(is.null(samp.probi)) {
+    samp.probi = matrix(1,nrow=length(y),ncol=1) 
   }
   
   if(is.null(inits)) {
@@ -41,7 +41,7 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
   }
   
   mm.fit = MMLongit(params=inits, id=id, X=x, Y=y, Xgam=x.t, Xsig=x.lv, Q=q, condlike=cond.like,
-                    sampprobs=samp.probs, sampprobi=samp.probsi, offset=offset, 
+                    sampprobs=samp.probs, sampprobi=samp.probi, offset=offset, 
                     stepmax=step.max, steptol=step.tol, hess.eps=hess.eps, 
                     AdaptiveQuad=adapt.quad, verbose=verbose,iterlim=iter.lim)
   
