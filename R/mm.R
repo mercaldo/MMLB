@@ -21,8 +21,10 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
   if(!is.null(t.formula))   x.t  = model.matrix(t.formula,model.frame(t.formula, data)) 
   if(!is.null(lv.formula))  x.lv = model.matrix(lv.formula, model.frame(lv.formula, data)) 
   
-  samp.probs = matrix(samp.probs,nrow=length(y),ncol=3,byrow=TRUE) #(never, any, always)
-
+  if (!is.matrix(samp.probs)) {
+    samp.probs = matrix(samp.probs, nrow = length(y), ncol = 3, byrow = TRUE)
+  }
+  
   if(is.null(samp.probi)) {
     samp.probi = matrix(1,nrow=length(y),ncol=1) 
   }
