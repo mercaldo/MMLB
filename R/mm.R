@@ -29,6 +29,10 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
     samp.probi = matrix(1,nrow=length(y),ncol=1) 
   }
   
+  if (!is.null(inits)) {
+    inits <- unlist(inits)
+  }
+  
   if(is.null(inits)) {
     inits = c(glm(mean.formula,family='binomial',data=data)$coef, rep(1, ncol(x.t) + ncol(x.lv)))
     if(any(is.na(inits))) {
