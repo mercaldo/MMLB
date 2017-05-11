@@ -20,7 +20,7 @@ mm(mean.formula, lv.formula = NULL, t.formula = NULL, id, data,
 }
   \item{id}{ a vector of cluster identifiers (it should be the same length nrow(data)).}
   \item{data}{ a required data frame }
-  \item{inits}{an optional vector for initial values for marginal mean parameters and all dependence parameters. If NULL, initial values will be automatically generated.}
+  \item{inits}{an optional list of length 3 containing initial values for marginal mean parameters and all dependence parameters. The format of the list should be: (1) estimates of the mean parameters, (2) estimates of the transition parameters (or NULL if only fitting a mLV model) and (3) estimates of the latent variable parameters (or NULL if only fitting a mT model). If NULL, initial values will be automatically generated.}
   \item{samp.probs}{a vector of 3 values that denote the sampling probability of non-responders, any-responders, and all-responders.}
   \item{samp.probi}{a vector of sampling probabilities - if using weighted estimating equations.}
   \item{offset}{an optional offset term.}
