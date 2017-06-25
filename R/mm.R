@@ -11,6 +11,8 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
   if(any(is.na(data))) data = na.omit(data)
   id    = data$id    = data[ , as.character(substitute(id)) ]
   
+  if(is.null(lv.formula)) q = 2
+  
   mean.f = model.frame(mean.formula, data)
   mean.t = attr(mean.f, "terms")
   y  = model.response(mean.f,'numeric') 
