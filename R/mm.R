@@ -27,8 +27,10 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
     samp.probs = matrix(samp.probs, nrow = length(y), ncol = 3, byrow = TRUE)
   }
   
+  useROBCOV <- TRUE
   if(is.null(samp.probi)) {
     samp.probi = matrix(1,nrow=length(y),ncol=1) 
+    useROBCOV <- FALSE
   }
   
   if (!is.null(inits)) {
@@ -69,7 +71,7 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
   names(out$alpha) = nms$alpha
   colnames(out$mod.cov) = rownames(out$mod.cov) = colnames(out$rob.cov) = rownames(out$rob.cov) = unlist(nms)
   out$control = with(mm.fit, c(condlike, AdaptiveQuad, code, niter, length(table(id)), max(table(id)),
-                               (sum(samp.probi)==0)))
+                               useROBCOV))
   
   aic = function(l=mm.fit$logL,k=nrow(mm.fit$modelcov)) 2*k-2*l
   bic = function(l=mm.fit$logL,k=nrow(mm.fit$modelcov),n=length(table(id))) -2*l + k *log(n) 
