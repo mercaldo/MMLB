@@ -64,11 +64,11 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
   out$beta  = mm.fit$beta
   out$alpha = mm.fit$alpha
   out$mod.cov = mm.fit$modelcov
-  out$emp.cov = mm.fit$empiricalcov
+  out$rob.cov = mm.fit$empiricalcov
   names(out$beta) = nms$beta
   names(out$alpha) = nms$alpha
-  colnames(out$mod.cov) = rownames(out$mod.cov) = colnames(out$emp.cov) = rownames(out$emp.cov) = unlist(nms)
-  out$control = with(mm.fit, c(condlike, AdaptiveQuad, code, niter, length(table(id)), max(table(id))))
+  colnames(out$mod.cov) = rownames(out$mod.cov) = colnames(out$rob.cov) = rownames(out$rob.cov) = unlist(nms)
+  out$control = with(mm.fit, c(condlike, AdaptiveQuad, code, niter, length(table(id)), max(table(id)),is.na(samp.probi)))
   
   aic = function(l=mm.fit$logL,k=nrow(mm.fit$modelcov)) 2*k-2*l
   bic = function(l=mm.fit$logL,k=nrow(mm.fit$modelcov),n=length(table(id))) -2*l + k *log(n) 
