@@ -7,7 +7,7 @@ function(object1, object2) {
   mod1 = list(mf=oo1$m.formula, tf=oo1$t.formula, lvf=oo1$lv.formula)
   mod2 = list(mf=oo2$m.formula, tf=oo2$t.formula, lvf=oo2$lv.formula)
   
-  if(!all.equal(mod1[2:3],mod2[2:3])) {
+  if(!identical(mod1[2:3],mod2[2:3])) {
     print('Warning: Association models differ!')
   }
   
