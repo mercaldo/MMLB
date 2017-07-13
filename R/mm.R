@@ -72,7 +72,8 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
   colnames(out$mod.cov) = rownames(out$mod.cov) = colnames(out$rob.cov) = rownames(out$rob.cov) = unlist(nms)
   out$control = with(mm.fit, c(condlike, AdaptiveQuad, code, niter, length(table(id)), max(table(id)),
                                useROBCOV))
-  
+  names(out$control) <- c('cond.like','adaptive.quad','convergence_code','n_iter','n_subj','max_n_visit','useRobCov')
+
   aic = function(l=mm.fit$logL,k=nrow(mm.fit$modelcov)) 2*k-2*l
   bic = function(l=mm.fit$logL,k=nrow(mm.fit$modelcov),n=length(table(id))) -2*l + k *log(n) 
   deviance = function(l=mm.fit$logL) -2*l
