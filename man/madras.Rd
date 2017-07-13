@@ -27,18 +27,18 @@ madras2$gender = (madras$gender==0)*1 # Male
 madras2$age = (madras$age==0)*1       # 1= <20
 
 mLV        = mm(thought~month + age + gender + age:month + gender:month,
-                lv.formula=~1, data=madras2,id=id, q=20)
+                lv.formula=~1, data=madras2,id=id)
 mT         = mm(thought~month + age + gender + age:month + gender:month, 
-                t.formula=~1, data=madras2,id=id, q=20)
+                t.formula=~1, data=madras2,id=id)
 mTLV       = mm(thought~month + age + gender + age:month + gender:month, 
-                lv.formula=~1, t.formula=~1, data=madras2,id=id, q=20)
+                lv.formula=~1, t.formula=~1, data=madras2,id=id)
 mTLV.lv.g  = mm(thought~month + age + gender + age:month + gender:month, 
-                lv.formula=~gender, t.formula=~1, data=madras2,id=id, q=20)
+                lv.formula=~gender, t.formula=~1, data=madras2,id=id)
 mTLV.t.g   = mm(thought~month + age + gender + age:month + gender:month, 
-                lv.formula=~1, t.formula=~gender, data=madras2,id=id, q=20)
+                lv.formula=~1, t.formula=~gender, data=madras2,id=id)
 mTLV.lvt.g = mm(thought~month + age + gender + age:month + gender:month,
                 t.formula=~gender,lv.formula=~gender, 
-                data=madras2,id=id, q=20)
+                data=madras2,id=id)
 }
 }
 
