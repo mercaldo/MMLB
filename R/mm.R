@@ -1,5 +1,5 @@
 mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, inits = NULL,
-         samp.probs = c(1, 1, 1), samp.probi = NULL, offset = NULL, q = 10, 
+         samp.probs = c(1, 1, 1), samp.probi = NULL, offset = NULL, q = 30, 
          cond.like = FALSE, step.max = 1, step.tol = 1e-06, hess.eps = 1e-07, 
          adapt.quad = FALSE, verbose = FALSE, iter.lim=100) {
   
@@ -11,7 +11,7 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
   if(any(is.na(data))) data = na.omit(data)
   id    = data$id    = data[ , as.character(substitute(id)) ]
   
-  if(is.null(lv.formula)) q = 2
+  if(is.null(lv.formula)) q = 1
   
   mean.f = model.frame(mean.formula, data)
   mean.t = attr(mean.f, "terms")
