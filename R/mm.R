@@ -4,6 +4,10 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
          adapt.quad = FALSE, verbose = FALSE, iter.lim=100) {
   
   if(is.null(lv.formula) & is.null(t.formula)) {stop('Specify association model (both lv.formula and t.formula arguments cannot be NULL.')}
+  if(!is.data.frame(data)) {
+    data <- as.data.frame(data)
+    warning('data converted to data.frame.')
+  }
   
   terms = unique( c(all.vars(mean.formula), all.vars(lv.formula), all.vars(t.formula), 
                     as.character(substitute(id))) )
@@ -12,6 +16,10 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
   id    = data$id    = data[ , as.character(substitute(id)) ]
   
   if(is.null(lv.formula)) q = 1
+  if(q<=0) {
+   warning('q needs to be at least 2, and was changed to 2.') 
+   q <- 2
+  }
   
   mean.f = model.frame(mean.formula, data)
   mean.t = attr(mean.f, "terms")
