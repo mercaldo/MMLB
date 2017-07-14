@@ -15,10 +15,7 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
   if(any(is.na(data))) data = na.omit(data)
   id    = data$id    = data[ , as.character(substitute(id)) ]
   
-  if(q<=1) {
-   warning('q needs to be at least 2, and was changed to 2.') 
-   q <- 2
-  }
+  if(q<=1) q <- 2
   if(is.null(lv.formula)) q = 1
   
   mean.f = model.frame(mean.formula, data)
