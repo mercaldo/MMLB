@@ -13,7 +13,8 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
                     as.character(substitute(id))) )
   data  = data[,terms]
   if(any(is.na(data))) data = na.omit(data)
-  id    = data$id    = data[ , as.character(substitute(id)) ]
+  id0   =  as.character(substitute(id))
+  id    = data$id    = data[ , id0 ]
   
   if(q<=1) q <- 2
   if(is.null(lv.formula)) q = 1
@@ -93,7 +94,7 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
   out$LLSC_args   = mm.fit$LLSC_args
   
   if(return_args) attr(out,'args') <- list('mean_formula'=mean.formula, 't_formula'=t.formula, 'lv_formula'=lv.formula,
-                                           'id'=as.character(substitute(id)), 'samp.probs'=samp.probs,'samp.probi'=samp.probi,'offset'=offset)
+                                           'id'=id0, 'samp.probs'=samp.probs,'samp.probi'=samp.probi,'offset'=offset)
   class(out) = 'MMLongit'
   out
 }
