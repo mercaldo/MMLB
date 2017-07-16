@@ -1,7 +1,7 @@
 mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, inits = NULL,
          samp.probs = c(1, 1, 1), samp.probi = NULL, offset = NULL, q = 30, 
          cond.like = FALSE, step.max = 1, step.tol = 1e-06, hess.eps = 1e-07, 
-         adapt.quad = FALSE, verbose = FALSE, iter.lim=100) {
+         adapt.quad = FALSE, verbose = FALSE, iter.lim=100, return_args=FALSE) {
   
   if(is.null(lv.formula) & is.null(t.formula)) {stop('Specify association model (both lv.formula and t.formula arguments cannot be NULL.')}
   if(!is.data.frame(data)) {
@@ -91,6 +91,9 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
   out$ObsInfoSubj = mm.fit$ObsInfoSubj
   out$ACSubj      = mm.fit$ACSubj
   out$LLSC_args   = mm.fit$LLSC_args
+  
+  if(return_args) attr(out,'args') <- list('mean_formula'=mean.formula, 't_formula'=t.formula, 'lv_formula'=lv.formula,
+                                           'id'=id, 'data'=data, 'samp.probs'samp.probs=,'samp.probi'=samp.probi,'offset'=offset)
   class(out) = 'MMLongit'
   out
 }
