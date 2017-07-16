@@ -84,16 +84,16 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
   deviance = function(l=mm.fit$logL) -2*l
   out$info_stats = c(aic(),bic(),mm.fit$logL,deviance())
   names(out$info_stats) = c('AIC','BIC','logLik','Deviance')
-  out$m.formula = mean.formula
-  out$t.formula = t.formula
-  out$lv.formula = lv.formula
+#  out$m.formula = mean.formula
+#  out$t.formula = t.formula
+#  out$lv.formula = lv.formula
   out$LogLikeSubj = mm.fit$LogLikeSubj
   out$ObsInfoSubj = mm.fit$ObsInfoSubj
   out$ACSubj      = mm.fit$ACSubj
   out$LLSC_args   = mm.fit$LLSC_args
   
   if(return_args) attr(out,'args') <- list('mean_formula'=mean.formula, 't_formula'=t.formula, 'lv_formula'=lv.formula,
-                                           'id'=id, 'data'=data, 'samp.probs'=samp.probs,'samp.probi'=samp.probi,'offset'=offset)
+                                           'id'=as.character(substitute(id)), 'samp.probs'=samp.probs,'samp.probi'=samp.probi,'offset'=offset)
   class(out) = 'MMLongit'
   out
 }
