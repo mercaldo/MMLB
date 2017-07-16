@@ -93,7 +93,7 @@ mm <- function(mean.formula, lv.formula = NULL, t.formula = NULL, id, data, init
   out$LLSC_args   = mm.fit$LLSC_args
   
   if(return_args) attr(out,'args') <- list('mean_formula'=mean.formula, 't_formula'=t.formula, 'lv_formula'=lv.formula,
-                                           'id'=id, 'data'=data, 'samp.probs'samp.probs=,'samp.probi'=samp.probi,'offset'=offset)
+                                           'id'=id, 'data'=data, 'samp.probs'=samp.probs,'samp.probi'=samp.probi,'offset'=offset)
   class(out) = 'MMLongit'
   out
 }
