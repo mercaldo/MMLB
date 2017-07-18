@@ -1,9 +1,9 @@
-\name{odsrand}
-\alias{odsrand}
+\name{odsdat}
+\alias{odsdat}
 \docType{data}
 \title{Simulated ODS data set}
 \description{Simulated data set 2500 subjects according a mTLV model with marginal mean parameters (intercept, time, Xe (binary exposure), time)=(-1.75, 0.25, 0.25, 0.1), and dependence model parameters (sigma, gamma)=(1,1).  The marginal exposure prevalence of Xe was assumed to be 0.35, and all subjects had 10 observations. A two-phase ODS design was implemented using the phase 1 ODS design D1[25,50,25], and a phase 2 ODS design of D2[0,300,0]. The code to generate odsrand is provided in the Example section.}
-\usage{data(odsrand)}
+\usage{data(odsdat)}
 \format{
   A data frame with 3830 observations on the following 11 variables.
   \describe{
@@ -154,8 +154,8 @@ prob_sampled
 
 # Update newdata with sampling probabilities
 newdata2 <- merge(newdata, prob_sampled, by='sample',all.x=TRUE)
-odsrand  <- newdata2[ order(newdata2$id, newdata2$time), ]
-odsrand  <- odsrand[!is.na(odsrand $sample), ]
+odsdat  <- newdata2[ order(newdata2$id, newdata2$time), ]
+odsdat  <- odsrand[!is.na(odsdat $sample), ]
 }
 }
 
