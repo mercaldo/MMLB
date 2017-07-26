@@ -85,7 +85,7 @@ get_sample <- function(DESIGN, IDSXSS, RSEXACT, REPLACE=FALSE) {
   
   tmp_remain <- mapply( function(AA,BB) {
     out <- AA
-    if(length(BB)>0)  out <- AA[!(AA%in%BB)]
+    if(length(BB)>0)  out <- AA[!(AA\%in\%BB)]
     out
   }, AA=IDSXSS, BB=tmp_samp)
   
@@ -128,7 +128,7 @@ s1info   <- get_sample(DESIGN=s1d, IDSXSS=tmp_ss, RSEXACT=FALSE)
 s1info$sp
 
 s1id     <- sort( unique(unlist( s1info$idsXss_samp )) )
-s1idX    <- which(newdata$id%in%s1id)
+s1idX    <- which(newdata$id\%in\%s1id)
 newdata$sample[s1idX] <- 1
 
 # Obtain phase 2 ODS sample
@@ -140,7 +140,7 @@ colnames(prob_sampled) <- c('sp1','sp2','sp3')
 s2d      <- apply( cbind( c(0,300,0), sapply(tmp_ss_2,length)), 1, min )
 s2info   <- get_sample(DESIGN=s2d, IDSXSS=tmp_ss_2, RSEXACT=FALSE) 
 s2info$sp
-s2idX    <- which(newdata$id %in% unlist(s2info$idsXss_samp))
+s2idX    <- which(newdata$id \%in\% unlist(s2info$idsXss_samp))
 newdata$sample[s2idX] <- 2 
 
 # Estimate phase 2 sampling probabilities
